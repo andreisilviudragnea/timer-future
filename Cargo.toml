@@ -5,4 +5,4 @@ authors = ["XYZ Author"]
 edition = "2021"
 
 [dependencies]
-futures = "0.3.17"
+futures = "0.3.28"
