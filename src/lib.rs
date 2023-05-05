@@ -75,7 +75,6 @@ impl TimerFuture {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     #[test]

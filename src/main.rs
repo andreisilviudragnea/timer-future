@@ -7,7 +7,7 @@ use {
         future::Future,
         sync::mpsc::{sync_channel, Receiver, SyncSender},
         sync::{Arc, Mutex},
-        task::{Context},
+        task::Context,
         time::Duration,
     },
     // The timer we wrote in the previous section:
@@ -43,7 +43,6 @@ impl Executor {
     }
 }
 
-
 /// `Spawner` spawns new futures onto the task channel.
 #[derive(Clone)]
 struct Spawner {
@@ -60,7 +59,6 @@ impl Spawner {
         self.task_sender.send(task).expect("too many tasks queued");
     }
 }
-
 
 /// A future that can reschedule itself to be polled by an `Executor`.
 struct Task {
