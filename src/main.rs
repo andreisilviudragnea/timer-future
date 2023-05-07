@@ -1,3 +1,6 @@
+mod pinning;
+
+use crate::pinning::Test;
 use {
     futures::{
         future::{BoxFuture, FutureExt},
@@ -97,6 +100,15 @@ fn new_executor_and_spawner() -> (Executor, Spawner) {
 }
 
 fn main() {
+    let mut test1 = Test::new("test1");
+    test1.init();
+    let mut test2 = Test::new("test2");
+    test2.init();
+
+    println!("a: {}, b: {}", test1.a(), test1.b());
+    std::mem::swap(&mut test1, &mut test2);
+    println!("a: {}, b: {}", test2.a(), test2.b());
+
     let (executor, spawner) = new_executor_and_spawner();
 
     // Spawn a task to print before and after waiting on a timer.
