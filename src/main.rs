@@ -1,3 +1,4 @@
+mod heap_pinning;
 mod pinning;
 mod stack_pinning;
 
@@ -130,6 +131,18 @@ fn main() {
         "a: {}, b: {}",
         stack_pinning::Test::a(test2.as_ref()),
         stack_pinning::Test::b(test2.as_ref())
+    );
+
+    let test1 = heap_pinning::Test::new("test1");
+    let test2 = heap_pinning::Test::new("test2");
+
+    assert_eq!(
+        (test1.as_ref().a(), test1.as_ref().b().as_str()),
+        ("test1", "test1")
+    );
+    assert_eq!(
+        (test2.as_ref().a(), test2.as_ref().b().as_str()),
+        ("test2", "test2")
     );
 
     let (executor, spawner) = new_executor_and_spawner();
