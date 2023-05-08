@@ -1,3 +1,4 @@
+mod async_blocks;
 mod heap_pinning;
 mod pinning;
 mod stack_pinning;
