@@ -1,5 +1,9 @@
+#![feature(async_fn_in_trait)]
+
 #[cfg(test)]
 mod async_blocks;
+#[cfg(test)]
+mod async_trait;
 #[cfg(test)]
 mod heap_pinning;
 #[cfg(test)]
