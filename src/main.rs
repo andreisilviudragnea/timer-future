@@ -1,6 +1,7 @@
 mod async_blocks;
 mod heap_pinning;
 mod pinning;
+mod send_approximation;
 mod stack_pinning;
 
 use crate::pinning::Test;
