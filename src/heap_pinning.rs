@@ -1,41 +1,39 @@
-use std::marker::PhantomPinned;
-use std::pin::Pin;
-
-#[derive(Debug)]
-pub struct Test {
-    a: String,
-    b: *const String,
-    _marker: PhantomPinned,
-}
-
-impl Test {
-    pub fn new(txt: &str) -> Pin<Box<Self>> {
-        let t = Test {
-            a: String::from(txt),
-            b: std::ptr::null(),
-            _marker: PhantomPinned,
-        };
-        let mut boxed = Box::pin(t);
-        let self_ptr: *const String = &boxed.a;
-        let pin1 = boxed.as_mut();
-        let test = unsafe { pin1.get_unchecked_mut() };
-        test.b = self_ptr;
-
-        boxed
-    }
-
-    pub fn a(self: Pin<&Self>) -> &str {
-        &self.get_ref().a
-    }
-
-    pub fn b(self: Pin<&Self>) -> &String {
-        unsafe { &*self.b }
-    }
-}
-
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use std::marker::PhantomPinned;
+    use std::pin::Pin;
+
+    #[derive(Debug)]
+    struct Test {
+        a: String,
+        b: *const String,
+        _marker: PhantomPinned,
+    }
+
+    impl Test {
+        fn new(txt: &str) -> Pin<Box<Self>> {
+            let t = Test {
+                a: String::from(txt),
+                b: std::ptr::null(),
+                _marker: PhantomPinned,
+            };
+            let mut boxed = Box::pin(t);
+            let self_ptr: *const String = &boxed.a;
+            let pin1 = boxed.as_mut();
+            let test = unsafe { pin1.get_unchecked_mut() };
+            test.b = self_ptr;
+
+            boxed
+        }
+
+        fn a(self: Pin<&Self>) -> &str {
+            &self.get_ref().a
+        }
+
+        fn b(self: Pin<&Self>) -> &String {
+            unsafe { &*self.b }
+        }
+    }
 
     #[test]
     fn test1() {

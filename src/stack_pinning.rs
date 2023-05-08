@@ -1,44 +1,42 @@
-use std::marker::PhantomPinned;
-use std::pin::Pin;
-
-#[derive(Debug)]
-pub struct Test {
-    a: String,
-    b: *const String,
-    _marker: PhantomPinned,
-}
-
-impl Test {
-    pub fn new(txt: &str) -> Self {
-        Test {
-            a: String::from(txt),
-            b: std::ptr::null(),
-            _marker: PhantomPinned, // This makes our type `!Unpin`
-        }
-    }
-
-    pub fn init(self: Pin<&mut Self>) {
-        let self_ptr: *const String = &self.a;
-        let this = unsafe { self.get_unchecked_mut() };
-        this.b = self_ptr;
-    }
-
-    pub fn a(self: Pin<&Self>) -> &str {
-        &self.get_ref().a
-    }
-
-    pub fn b(self: Pin<&Self>) -> &String {
-        assert!(
-            !self.b.is_null(),
-            "Test::b called without Test::init being called first"
-        );
-        unsafe { &*(self.b) }
-    }
-}
-
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use std::marker::PhantomPinned;
+    use std::pin::Pin;
+
+    #[derive(Debug)]
+    struct Test {
+        a: String,
+        b: *const String,
+        _marker: PhantomPinned,
+    }
+
+    impl Test {
+        fn new(txt: &str) -> Self {
+            Test {
+                a: String::from(txt),
+                b: std::ptr::null(),
+                _marker: PhantomPinned, // This makes our type `!Unpin`
+            }
+        }
+
+        fn init(self: Pin<&mut Self>) {
+            let self_ptr: *const String = &self.a;
+            let this = unsafe { self.get_unchecked_mut() };
+            this.b = self_ptr;
+        }
+
+        fn a(self: Pin<&Self>) -> &str {
+            &self.get_ref().a
+        }
+
+        fn b(self: Pin<&Self>) -> &String {
+            assert!(
+                !self.b.is_null(),
+                "Test::b called without Test::init being called first"
+            );
+            unsafe { &*(self.b) }
+        }
+    }
 
     #[test]
     fn test1() {

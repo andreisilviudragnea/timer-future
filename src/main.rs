@@ -4,8 +4,6 @@ mod pinning;
 mod send_approximation;
 mod stack_pinning;
 
-use crate::pinning::Test;
-use std::pin::Pin;
 use {
     futures::{
         future::{BoxFuture, FutureExt},
@@ -105,48 +103,6 @@ fn new_executor_and_spawner() -> (Executor, Spawner) {
 }
 
 fn main() {
-    let mut test1 = Test::new("test1");
-    test1.init();
-    let mut test2 = Test::new("test2");
-    test2.init();
-
-    println!("a: {}, b: {}", test1.a(), test1.b());
-    std::mem::swap(&mut test1, &mut test2);
-    println!("a: {}, b: {}", test2.a(), test2.b());
-
-    // test1 is safe to move before we initialize it
-    let mut test1 = stack_pinning::Test::new("test1");
-    // Notice how we shadow `test1` to prevent it from being accessed again
-    let mut test1 = unsafe { Pin::new_unchecked(&mut test1) };
-    stack_pinning::Test::init(test1.as_mut());
-
-    let mut test2 = stack_pinning::Test::new("test2");
-    let mut test2 = unsafe { Pin::new_unchecked(&mut test2) };
-    stack_pinning::Test::init(test2.as_mut());
-
-    println!(
-        "a: {}, b: {}",
-        stack_pinning::Test::a(test1.as_ref()),
-        stack_pinning::Test::b(test1.as_ref())
-    );
-    println!(
-        "a: {}, b: {}",
-        stack_pinning::Test::a(test2.as_ref()),
-        stack_pinning::Test::b(test2.as_ref())
-    );
-
-    let test1 = heap_pinning::Test::new("test1");
-    let test2 = heap_pinning::Test::new("test2");
-
-    assert_eq!(
-        (test1.as_ref().a(), test1.as_ref().b().as_str()),
-        ("test1", "test1")
-    );
-    assert_eq!(
-        (test2.as_ref().a(), test2.as_ref().b().as_str()),
-        ("test2", "test2")
-    );
-
     let (executor, spawner) = new_executor_and_spawner();
 
     // Spawn a task to print before and after waiting on a timer.
