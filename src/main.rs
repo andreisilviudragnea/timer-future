@@ -5,6 +5,8 @@ mod heap_pinning;
 #[cfg(test)]
 mod pinning;
 #[cfg(test)]
+mod recursion;
+#[cfg(test)]
 mod send_approximation;
 #[cfg(test)]
 mod stack_pinning;
